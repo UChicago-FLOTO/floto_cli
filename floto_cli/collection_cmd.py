@@ -3,9 +3,13 @@ import json
 import click
 import requests
 import os
+import config_handler
 
-url = os.getenv("FLOTO_DOMAIN", "https://portal.floto.science/api")
-temp_token = os.getenv("FLOTO_TOKEN", "")
+url = "https://portal.floto.science/api"
+cookie = config_handler.get_token()
+sessionId = 'sessionid'
+csrftoken = 'csrftoken'
+cookie = {sessionId: config_handler.get_token()}
 
 
 @click.group('collection_cli')
@@ -18,18 +22,32 @@ def collection_cli(ctx):
 def collection():
     pass
 
+
 @collection.command("collections")
 def collections():
     click.echo("List collections: ")
-    resp = requests.get(url=url + "/collections/")
+    resp = requests.get(url=url + "/collections/", cookies=cookie)
+    print(resp)
+    print(resp.json())
     return resp
+
 
 @collection.command("details")
 @click.argument("uuid")
 def details(uuid):
     click.echo("Collection details")
-    resp = requests.get(url=url + "/collections/" + uuid)
+    resp = requests.get(url=url + "/collections/" + uuid, cookies=cookie)
+    print(resp)
+    print(resp.json())
     return resp
+
+@collection.command("list")
+def list():
+    click.echo("Collection list")
+    resp = requests.get(url=url+"/collections", cookies=cookie)
+    print(resp)
+    print(resp.json())
+
 
 @collection.command("create")
 @click.argument("name")
@@ -43,8 +61,11 @@ def create(name, is_public, description):
         "description": description
     }
     data = json.dumps(data)
-    resp = requests.post(url=url+"/collections", json=data)
+    resp = requests.post(url=url + "/collections", json=data, cookies=cookie)
+    print(resp)
+    print(resp.json())
     return resp
+
 
 @collection.command("update")
 @click.argument("name")
@@ -58,12 +79,13 @@ def update(name, is_public, description):
         "description": description
     }
     data = json.dumps(data)
-    resp = requests.post(url=url+"/collections", json=data)
+    resp = requests.put(url=url + "/collections", json=data, cookies=cookie)
     return resp
+
 
 @collection.command("delete")
 @click.argument("uuid")
 def delete(uuid):
     click.echo("Collection delete")
-    resp = requests.delete(url=url+"/collections/"+uuid)
+    resp = requests.delete(url=url + "/collections/" + uuid, cookies=cookie)
     return resp
