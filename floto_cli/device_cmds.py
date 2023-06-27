@@ -3,14 +3,20 @@ import os
 
 import click
 import requests
+import rich
+
 import config_handler
 from device_model import Device
+from device_model import make_devices_table
+from rich.console import Console
+from rich.table import Table
 
 url = "https://portal.floto.science/api"
 temp_token = os.getenv("FLOTO_TOKEN", "")
 sessionId = 'sessionid'
 csrftoken = 'csrftoken'
 cookie = {sessionId: config_handler.get_token()}
+console = Console()
 
 
 @click.group('device_cli')
@@ -29,10 +35,12 @@ def device():
 def ls(filter):
     # works
     resp = requests.get(url=url + "/devices", params={'filter': filter}, cookies=cookie)
-
     device_data = resp.json()
+    table = make_devices_table()
     device_list = [Device(**data) for data in device_data]
-    print(device_list)
+    for d in device_list:
+        table.add_row(*d.make_row())
+    console.print(table)
     return device_list
 
 
@@ -44,7 +52,7 @@ def details(uuid, filter):
     # works
     resp = requests.get(url=url + "/devices/" + uuid, params={'filter': filter}, cookies=cookie)
     device = Device(**resp.json())
-    print(device)
+    console.log(device)
     return device
 
 
@@ -57,7 +65,7 @@ def logs(uuid, count, filter):
     # will work
     print(uuid, count)
     resp = requests.get(url=url + "/devices/" + uuid + "/logs/" + str(count), params={'filter': filter}, cookies=cookie)
-    print(resp.json())
+    console.log(resp.json())
     return resp.json()
 
 
@@ -96,3 +104,9 @@ def action(uuid, action):
     data = json.dumps(action)
     resp = requests.post(url=url + "/devices/" + uuid + "/action", json=data, cookies=cookie)
     click.echo(resp.json())
+
+def _make_table(*headers, **kwargs):
+    kwargs.setdefault("show_header", True)
+    kwargs.setdefault("header_style", "bold green")
+    kwargs.setdefault("box", box.MINIMAL_HEAVY_HEAD)
+    return Table(*headers, **kwargs)
