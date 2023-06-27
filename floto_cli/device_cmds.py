@@ -3,13 +3,11 @@ import os
 
 import click
 import requests
-import rich
 
 import config_handler
 from device_model import Device
 from device_model import make_devices_table
 from rich.console import Console
-from rich.table import Table
 
 url = "https://portal.floto.science/api"
 temp_token = os.getenv("FLOTO_TOKEN", "")
