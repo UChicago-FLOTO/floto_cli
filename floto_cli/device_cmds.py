@@ -44,7 +44,6 @@ def ls(filter):
     return device_list
 
 
-
 @device.command("details")
 @click.argument("uuid")
 @click.option('--filter', '-f')
@@ -94,6 +93,7 @@ def updateEnv(uuid, env):
     print(resp.request.url)
     print(resp)
 
+
 @device.command("action")
 @click.argument("uuid")
 @click.option('--action', type=click.Choice(['BLINK', 'RESTART', 'SHUTDOWN']), required=True)
@@ -104,9 +104,3 @@ def action(uuid, action):
     data = json.dumps(action)
     resp = requests.post(url=url + "/devices/" + uuid + "/action", json=data, cookies=cookie)
     click.echo(resp.json())
-
-def _make_table(*headers, **kwargs):
-    kwargs.setdefault("show_header", True)
-    kwargs.setdefault("header_style", "bold green")
-    kwargs.setdefault("box", box.MINIMAL_HEAVY_HEAD)
-    return Table(*headers, **kwargs)
