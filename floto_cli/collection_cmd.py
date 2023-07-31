@@ -100,5 +100,7 @@ def update(collection_uuid, name, is_public, description):
 @click.argument("uuid")
 def delete(uuid):
     click.echo("Collection delete")
-    resp = requests.delete(url=url + "/collections/" + uuid, cookies=cookie)
+    resp = requests.delete(url=url + "/collections/" + uuid+"/", cookies=cookie)
+    print(resp.status_code)
+    print(resp.text)
     return resp
