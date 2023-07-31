@@ -37,9 +37,9 @@ def collections():
 @click.argument("uuid")
 def details(uuid):
     click.echo("Collection details")
-    resp = requests.get(url=url + "/collections/" + uuid, cookies=cookie)
-    print(resp)
-    print(resp.json())
+    resp = requests.get(url=url + "/collections/" + uuid+"/", cookies=cookie)
+    print(resp.status_code)
+    print(resp.text)
     return resp
 
 @collection.command("ls")
