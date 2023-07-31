@@ -5,7 +5,8 @@ import requests
 import os
 import config_handler
 
-url = "https://portal.floto.science/api"
+# url = "https://portal.floto.science/api"
+url = "http://localhost:8080/api"
 cookie = config_handler.get_token()
 sessionId = 'sessionid'
 csrftoken = 'csrftoken'
@@ -23,7 +24,7 @@ def collection():
     pass
 
 
-@collection.command("collections")
+@collection.command("ls")
 def collections():
     click.echo("List collections: ")
     resp = requests.get(url=url + "/collections/", cookies=cookie)
@@ -41,17 +42,18 @@ def details(uuid):
     print(resp.json())
     return resp
 
-@collection.command("list")
+@collection.command("ls")
 def list():
     click.echo("Collection list")
     resp = requests.get(url=url+"/collections", cookies=cookie)
     print(resp)
-    print(resp.json())
+    print(resp.text)
+    # print(resp.json())
 
 
 @collection.command("create")
 @click.argument("name")
-@click.option('--is_public', '-up', default=False, type=bool)
+@click.option('--is_public', '-p', default=False, type=bool)
 @click.option('--description', '-d', required=False, type=str)
 def create(name, is_public, description):
     click.echo("Collection create")
@@ -61,25 +63,36 @@ def create(name, is_public, description):
         "description": description
     }
     data = json.dumps(data)
-    resp = requests.post(url=url + "/collections", json=data, cookies=cookie)
-    print(resp)
-    print(resp.json())
+    print(data)
+    resp = requests.post(url=url + "/collections/", json=data, cookies=cookie)
+    print(resp.status_code)
+    print(resp.text)
+    # if 300 > resp.status_code > 199:
+    #     print(resp.json())
+    # else:
+    #     print(resp.text)
     return resp
 
 
 @collection.command("update")
-@click.argument("name")
+@click.argument("collection_uuid")
+@click.option('--name', '-n', default=False, type=str)
 @click.option('--is_public', '-up', default=False, type=bool)
 @click.option('--description', '-d', required=False, type=str)
-def update(name, is_public, description):
+def update(collection_uuid, name, is_public, description):
     click.echo("Collection update")
     data = {
         "name": name,
         "is_public": is_public,
-        "description": description
+        "description": description,
+        'collection_uuid': collection_uuid
     }
     data = json.dumps(data)
-    resp = requests.put(url=url + "/collections", json=data, cookies=cookie)
+    print(data)
+    resp = requests.put(url=url + "/collections/" + f"{collection_uuid}/", json=data, cookies=cookie)
+    # resp = requests.put(url=url + "/collections/", json=data, cookies=cookie)
+    print(resp)
+    print(resp.text)
     return resp
 
 

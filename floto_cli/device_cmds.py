@@ -9,7 +9,8 @@ from device_model import Device
 from device_model import make_devices_table
 from rich.console import Console
 
-url = "https://portal.floto.science/api"
+# url = "https://portal.floto.science/api"
+url = "http://localhost:8080/api"
 temp_token = os.getenv("FLOTO_TOKEN", "")
 sessionId = 'sessionid'
 csrftoken = 'csrftoken'
@@ -33,6 +34,7 @@ def device():
 def ls(filter):
     # works
     resp = requests.get(url=url + "/devices", params={'filter': filter}, cookies=cookie)
+    print(resp)
     device_data = resp.json()
     table = make_devices_table()
     device_list = [Device(**data) for data in device_data]
