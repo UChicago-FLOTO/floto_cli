@@ -67,10 +67,6 @@ def create(name, is_public, description):
     resp = requests.post(url=url + "/collections/", json=data, cookies=cookie)
     print(resp.status_code)
     print(resp.text)
-    # if 300 > resp.status_code > 199:
-    #     print(resp.json())
-    # else:
-    #     print(resp.text)
     return resp
 
 

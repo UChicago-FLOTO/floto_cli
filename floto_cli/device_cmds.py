@@ -96,14 +96,18 @@ def updateEnv(uuid, env):
 
 @device.command("action")
 @click.argument("uuid")
-@click.option('--action', type=click.Choice(['BLINK', 'RESTART', 'SHUTDOWN']), required=True)
-def action(uuid, action):
+@click.argument('device_action', type=click.Choice(['BLINK', 'RESTART']), required=True)
+def action(uuid, device_action):
     # no work
-    click.echo("Action:", action)
-    click.echo("UUID: ", uuid)
-    data = json.dumps(action)
-    resp = requests.post(url=url + "/devices/" + uuid + "/action", json=data, cookies=cookie)
-    click.echo(resp.json())
+    print('Action: ', device_action)
+    print('UUID: ', uuid)
+    data = {
+        'action': device_action
+    }
+    data = json.dumps(data)
+    resp = requests.post(url=url + "/devices/" + uuid + "/action/", json=data, cookies=cookie)
+    print(resp.status_code)
+    # print(resp.text)
 
 
 @device.command("addEnv")
