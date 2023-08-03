@@ -104,3 +104,40 @@ def action(uuid, action):
     data = json.dumps(action)
     resp = requests.post(url=url + "/devices/" + uuid + "/action", json=data, cookies=cookie)
     click.echo(resp.json())
+
+
+@device.command("addEnv")
+@click.argument("uuid")
+@click.argument("envs", nargs=-1)
+def addEnv(uuid, envs):
+    print("Env:", envs, " ", type(envs))
+    data = dict([env.split("=") for env in envs])
+    data['uuid'] = uuid
+    # no work
+    data = json.dumps(data)
+    print(data)
+    resp = requests.post(url=url + "/envs/", json=data, cookies=cookie)
+    print(resp.status_code)
+    # print(resp.text)
+    return resp
+
+
+@device.command("rmEnv")
+@click.argument("uuid")
+@click.argument("env")
+def rmEnv(uuid, env):
+    print("Rm Env: ", env, " ", type(env))
+    data = json.dumps(env)
+    resp = requests.delete(url=url + '/envs/' + uuid + '/', json=data, cookies=cookie)
+    print(resp.status_code)
+    print(resp.text)
+
+
+@device.command("lsEnv")
+@click.argument("uuid")
+def lsEnv(uuid):
+    print("ls Env: ", uuid)
+    resp = requests.get(url=url + '/envs/'+uuid+"/", cookies=cookie)
+    print(resp.status_code)
+    print(resp.text)
+
