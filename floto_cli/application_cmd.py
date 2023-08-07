@@ -44,16 +44,18 @@ def create_application(container_ref, name, description, environment, is_public)
 
 @application.command('ls')
 def list_applications():
-    resp = requests.get(url=url+'/applications', cookies=cookie)
+    resp = requests.get(url=url + '/applications', cookies=cookie)
     print(resp.status_code)
     print(resp.text)
+
 
 @application.command('details')
 @click.argument('app_uuid')
 def details_application(app_uuid):
-    resp = requests.put(url=url+'/applications/'+app_uuid, cookies=cookie)
+    resp = requests.put(url=url + '/applications/' + app_uuid, cookies=cookie)
     print(resp.status_code)
     print(resp.text)
+
 
 @application.command('update')
 @click.argument('app_uuid')
@@ -70,13 +72,14 @@ def update_application(app_uuid, container_ref, name, description, environment, 
         'environment': environment,
         'is_public': is_public
     }
-    resp = requests.put(url=url+'/applications/'+app_uuid, data=body, cookies=cookie)
+    resp = requests.put(url=url + '/applications/' + app_uuid, data=body, cookies=cookie)
     print(resp.status_code)
     print(resp.text)
+
 
 @application.command('delete')
 @click.argument('app_uuid')
 def delete_app(app_uuid):
-    resp = requests.delete(url=url+'/applications/'+app_uuid, cookies=cookie)
+    resp = requests.delete(url=url + '/applications/' + app_uuid, cookies=cookie)
     print(resp.status_code)
     print(resp.text)
